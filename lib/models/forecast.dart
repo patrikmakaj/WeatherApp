@@ -13,10 +13,20 @@ class ForecastItem {
 
   factory ForecastItem.fromJson(Map<String, dynamic> json) {
     return ForecastItem(
-      dateTime: DateTime.parse(json['dt_txt']),
-      temperature: json['main']['temp'].toDouble(),
-      description: json['weather'][0]['description'],
-      iconCode: json['weather'][0]['icon'],
+      dateTime: DateTime.tryParse(json['dt_txt'] ?? json['dt']) ?? DateTime.now(),
+      temperature: json['main']?['temp']?.toDouble() ?? json['temperature']?.toDouble() ?? 0.0,
+      description: json['weather']?[0]?['description'] ?? json['description'] ?? '',
+      iconCode: json['weather']?[0]?['icon'] ?? json['iconCode'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'dt': dateTime.toIso8601String(),
+      'main': {'temp': temperature},
+      'weather': [
+        {'description': description, 'icon': iconCode}
+      ]
+    };
   }
 }
